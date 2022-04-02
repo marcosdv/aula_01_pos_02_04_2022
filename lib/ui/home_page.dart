@@ -1,7 +1,8 @@
-import 'dart:ui';
-
+import 'package:aula_01_pos/components/campo_texto.dart';
 import 'package:aula_01_pos/ui/sobre_page.dart';
 import 'package:flutter/material.dart';
+
+import 'contato_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,8 +16,17 @@ class _HomePageState extends State<HomePage> {
   final _gasolinaController = TextEditingController();
 
   void _calcularClique() {
-    var valorEtanol = double.parse(_etanolController.text);
-    var valorGasolina = double.parse(_gasolinaController.text);
+    var valorEtanol = double.tryParse(_etanolController.text.replaceAll(',', '.')) ?? 0;
+    var valorGasolina = double.tryParse(_gasolinaController.text.replaceAll(',', '.')) ?? 0;
+
+    if (valorGasolina <= 0) {
+      _mostrarMensagem('Digite o valor da gasolina');
+      return;
+    }
+    if (valorEtanol <= 0) {
+      _mostrarMensagem('Digite o valor do etanol');
+      return;
+    }
 
     if (valorEtanol <= (valorGasolina * 0.7)) {
       _mostrarMensagem('Abasteça com Etanol');
@@ -28,6 +38,12 @@ class _HomePageState extends State<HomePage> {
   void _abrirSobre() {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => SobrePage()
+    ));
+  }
+
+  void _abrirContato() {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => ContatoPage()
     ));
   }
 
@@ -48,35 +64,63 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.help_outline),
             onPressed: _abrirSobre,
           ),
+          IconButton(
+            icon: const Icon(Icons.mail_outline),
+            onPressed: _abrirContato,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: _calcularClique,
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Text('Etanol x Gasolina'),
+              decoration: BoxDecoration(
+                color: Colors.blue
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.calculate_outlined),
+              trailing: Icon(Icons.skip_next),
+              title: Text('Calcular'),
+              onTap: _calcularClique,
+            ),
+            ListTile(
+              leading: Icon(Icons.mail),
+              trailing: Icon(Icons.skip_next),
+              title: Text('Contato'),
+              onTap: _abrirContato,
+            ),
+            ListTile(
+              leading: Icon(Icons.help_outline),
+              trailing: Icon(Icons.skip_next),
+              title: Text('Sobre'),
+              onTap: _abrirSobre,
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
-          _criarCampoTexto(controller: _etanolController, texto: 'Valor do Etanol', top: 32),
-          _criarCampoTexto(controller: _gasolinaController, texto: 'Valor da Gasolina', bottom: 32),
+          CampoTexto(
+            controller: _etanolController,
+            texto: 'Valor do Etanol',
+            top: 32,
+            prefixo: 'R\$ ',
+            teclado: TextInputType.number,
+          ),
+          CampoTexto(
+            controller: _gasolinaController,
+            texto: 'Valor da Gasolina',
+            bottom: 32,
+            prefixo: 'R\$ ',
+            teclado: TextInputType.number,
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _criarCampoTexto({required TextEditingController controller,
-    required String texto,
-    double left = 16, double top = 16, double right = 16, double bottom = 16}) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(left, top, right, bottom),
-      child: TextField(
-        controller: controller,
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          labelText: texto,
-          labelStyle: const TextStyle(fontSize: 28),
-          prefixText: 'R\$ ',
-          border: const OutlineInputBorder(),
-        ),
       ),
     );
   }
