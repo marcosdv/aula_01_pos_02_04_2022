@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:aula_01_pos/ui/sobre_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,21 +11,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var etanolController = TextEditingController();
-  var gasolinaController = TextEditingController();
-  var resultado = '';
+  final _etanolController = TextEditingController();
+  final _gasolinaController = TextEditingController();
 
-  void calcularClique() {
-    var valorEtanol = double.parse(etanolController.text);
-    var valorGasolina = double.parse(gasolinaController.text);
+  void _calcularClique() {
+    var valorEtanol = double.parse(_etanolController.text);
+    var valorGasolina = double.parse(_gasolinaController.text);
 
     if (valorEtanol <= (valorGasolina * 0.7)) {
-      resultado = 'Etanol';
+      _mostrarMensagem('Abasteça com Etanol');
     } else {
-      resultado = 'Gasolina';
+      _mostrarMensagem('Abasteça com Gasolina');
     }
+  }
 
-    setState(() { });
+  void _abrirSobre() {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => SobrePage()
+    ));
   }
 
   @override
@@ -35,50 +39,63 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.home, size: 40),
-            Text('Etanol x Gasolina', style: TextStyle(fontSize: 30),),
+            Icon(Icons.home, size: 30),
+            Text('Etanol x Gasolina', style: TextStyle(fontSize: 20),),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: _abrirSobre,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: calcularClique,
+        onPressed: _calcularClique,
       ),
       body: Column(
         children: [
-          //Text('Valor do Etanol:', style: TextStyle(fontSize: 30),),
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
-            child: TextField(
-              controller: etanolController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Valor do Etanol',
-                labelStyle: TextStyle(fontSize: 28),
-                prefixText: 'R\$ ',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: gasolinaController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Valor da Gasolina',
-                labelStyle: TextStyle(fontSize: 28),
-                prefixText: 'R\$ ',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-
-          Text('Abasteça com ${resultado.toUpperCase()}', style: TextStyle(fontSize: 24),),
+          _criarCampoTexto(controller: _etanolController, texto: 'Valor do Etanol', top: 32),
+          _criarCampoTexto(controller: _gasolinaController, texto: 'Valor da Gasolina', bottom: 32),
         ],
       ),
+    );
+  }
+
+  Widget _criarCampoTexto({required TextEditingController controller,
+    required String texto,
+    double left = 16, double top = 16, double right = 16, double bottom = 16}) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(left, top, right, bottom),
+      child: TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          labelText: texto,
+          labelStyle: const TextStyle(fontSize: 28),
+          prefixText: 'R\$ ',
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  void _mostrarMensagem(String texto) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Etanol x Gasolina'),
+          content: Text(texto),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () { Navigator.pop(context); },
+            ),
+          ],
+        );
+      }
     );
   }
 }
