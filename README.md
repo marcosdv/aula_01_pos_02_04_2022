@@ -7,13 +7,13 @@
 
 ### Conteúdo
 
-- [ ] Criando métodos para criar Widgets
-- [ ] Controllers para Widgets
-- [ ] AlertDialog para mensagens
-- [ ] Criando componentes Widgets Stateless
-- [ ] Utilizando os novos componentes
-- [ ] Configurando o pubspec.yaml
-- [ ] Instalando packages no pubspec.yaml
+- [x] Criando métodos para criar Widgets
+- [x] Controllers para Widgets
+- [x] AlertDialog para mensagens
+- [x] Criando componentes Widgets Stateless
+- [x] Utilizando os novos componentes
+- [x] Configurando o pubspec.yaml
+- [x] Instalando packages no pubspec.yaml
 
 
 ### Tecnologias
